@@ -803,3 +803,5 @@ function UILib.CreateWindow(title, position, size)
 		Tabs = tabs
 	}
 end
+
+return UILib
