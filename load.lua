@@ -238,6 +238,65 @@ function UILib.CreateWindow(title, position, size)
 
 			return label
 		end
+		
+		function newTab:NumberBox(labelText, defaultValue, minValue, maxValue, callback)
+			-- Container for the number box
+			local container = Instance.new("Frame")
+			container.Size = UDim2.new(1, -20, 0, 30)  -- Width and Height
+			container.Position = UDim2.new(0, 10, 0, 0) -- Left padding
+			container.BackgroundTransparency = 1
+			container.Parent = tabContent
+
+			-- Label for the number box
+			local label = Instance.new("TextLabel")
+			label.Size = UDim2.new(1, 0, 0, 20)
+			label.Text = labelText
+			label.TextColor3 = Color3.new(1, 1, 1)
+			label.BackgroundTransparency = 1
+			label.Font = Enum.Font.SourceSans
+			label.TextSize = 16
+			label.TextXAlignment = Enum.TextXAlignment.Left
+			label.Parent = container
+
+			-- Padding for the container
+			local padding = Instance.new("UIPadding")
+			padding.PaddingLeft = UDim.new(0, 10)  -- Push everything inside to the right
+			padding.PaddingRight = UDim.new(0, 10)
+			padding.Parent = container
+
+			-- Input box for the number value
+			local numberBox = Instance.new("TextBox")
+			numberBox.Size = UDim2.new(0, 70, 0, 20)
+			numberBox.Position = UDim2.new(1, -80, 0, 0)  -- Position it to the right of the label
+			numberBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+			numberBox.TextColor3 = Color3.new(1, 1, 1)
+			numberBox.Font = Enum.Font.SourceSans
+			numberBox.TextSize = 16
+			numberBox.Text = tostring(defaultValue)
+			numberBox.ClearTextOnFocus = false
+			numberBox.Parent = container
+			roundify(numberBox)
+
+			-- Allow the user to input only numbers
+			numberBox.FocusLost:Connect(function(enter)
+				if enter then
+					local inputValue = tonumber(numberBox.Text)
+					if inputValue then
+						-- Clamp the value within the min and max range
+						inputValue = math.clamp(inputValue, minValue, maxValue)
+						numberBox.Text = tostring(inputValue)  -- Update the input box text
+						if callback then
+							callback(inputValue)  -- Call the callback with the new value
+						end
+					else
+						-- If the input is invalid, reset the number box to the default value
+						numberBox.Text = tostring(defaultValue)
+					end
+				end
+			end)
+
+			return numberBox
+		end
 
 		function newTab:Keybind(labelText, defaultKey, callback)
 			local container = Instance.new("Frame")
